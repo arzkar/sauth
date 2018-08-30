@@ -61,11 +61,13 @@ class SimpleHTTPAuthHandler(SimpleHTTPRequestHandler):
             self.wfile.write(auth_header)
             self.wfile.write(b"not authenticated")
 
+
 class ThreadingSimpleServer(socketserver.ThreadingMixIn, HTTPServer):
     """
     Not to be confused with http.server.ThreadingHTTPServer that appears in 3.7
     """
     pass
+
 
 def serve_http(ip="", port=80, https=True, start_dir=None, handler_class=SimpleHTTPAuthHandler):
     """setting up server"""
