@@ -89,7 +89,7 @@ def serve_http(ip="", port=80, https=True, start_dir=None, handler_class=SimpleH
             sys.stdout.flush()
             server.handle_request()
     except KeyboardInterrupt:
-        print("\nShutting down server per users request.")
+        print("\nKeyboard Interrupt received. Shutting server. Bye!")
 
 
 @click.command()
