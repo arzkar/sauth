@@ -7,7 +7,7 @@ license="GNU General Public License v3"
 __version__ = '1.0.1'
 __prog__ = 'sauth'
 
-from http.server import SimpleHTTPRequestHandler
+from http.server import SimpleHTTPRequestHandler, HTTPServer
 import os
 import sys
 import base64
@@ -61,10 +61,14 @@ class SimpleHTTPAuthHandler(SimpleHTTPRequestHandler):
             self.wfile.write(auth_header)
             self.wfile.write(b"not authenticated")
 
+class ThreadingSimpleServer(socketserver.ThreadingMixIn, HTTPServer):
+    """
+    Not to be confused with http.server.ThreadingHTTPServer that appears in 3.7
+    """
+    pass
 
 def serve_http(ip="", port=80, https=True, start_dir=None, handler_class=SimpleHTTPAuthHandler):
     """setting up server"""
-    httpd = socketserver.TCPServer((ip, port), handler_class)
 
     if https:
         httpd.socket = ssl.wrap_socket(httpd.socket, keyfile=KEY_FILE,
@@ -74,11 +78,16 @@ def serve_http(ip="", port=80, https=True, start_dir=None, handler_class=SimpleH
         print("Changing dir to {cd}".format(cd=start_dir))
         os.chdir(start_dir)
 
-    socket_addr = httpd.socket.getsockname()
+    server = ThreadingSimpleServer(('0.0.0.0', port), SimpleHTTPAuthHandler)
     print('Serving "{}" directory on {}://{}:{}'.format(
-        os.getcwd(), 'https' if https else 'http', socket_addr[0], socket_addr[1])
+       os.getcwd(), 'https' if https else 'http', ip, port)
     )
-    httpd.serve_forever()
+    try:
+        while 1:
+            sys.stdout.flush()
+            server.handle_request()
+    except KeyboardInterrupt:
+        print("\nShutting down server per users request.")
 
 
 @click.command()
