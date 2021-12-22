@@ -1,0 +1,37 @@
+[tool.poetry]
+name = "sauth"
+version = "1.1.0"
+description = "simple server for serving directories via http or https and BASIC authorization"
+authors = ["granitosaurus <bernardas.alisauskas@pm.me>"]
+readme = "README.rst"
+homepage = "https://github.com/Granitosaurus/sauth/"
+repository = "https://github.com/Granitosaurus/sauth/"
+license = "GPL-3.0-or-later"
+keywords = [
+    "http","server","authentication",
+]
+classifiers = [
+    "Intended Audience :: Developers",
+    "Natural Language :: English",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.6",
+]
+
+[tool.poetry.dependencies]
+python = "^3.6"
+click = "^8.0.3"
+
+[tool.poetry.dev-dependencies]
+
+[tool.poetry.scripts]
+sauth = 'sauth:main'
+
+[tool.black]
+line-length = 120
+target-version = ['py36', 'py37', 'py38', 'py39']
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

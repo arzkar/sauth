@@ -16,9 +16,10 @@ A simple server for serving directories via http or https and BASIC authorizatio
       Start http server with basic authentication current directory.
 
     Options:
-      --https     use https
-      --dir TEXT  use different directory
-      --help      Show this message and exit.
+      -d, --dir TEXT  use different directory
+      -s, --https     use https
+      -t, --thread    serve each request in a different thread
+      --help          Show this message and exit.
 
 * Free software: GNU General Public License v3
 
@@ -45,3 +46,8 @@ You can specify port and ip to serve on with 3rd and 4th arguments::
 
     $ sauth someuser somepass 127.0.0.1 1234
     Serving "/home/user/somedir" directory on http://127.0.0.1:1234
+
+Threading is also supported through `-t` or `--thread` flags:
+
+    $ sauth someuser somepass 127.0.0.1 1234 --thread
+    Serving "/home/user/somedir" directory on http://127.0.0.1:1234 using threading
