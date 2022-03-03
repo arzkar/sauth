@@ -13,7 +13,7 @@ import sys
 import base64
 import ssl
 import socketserver
-import click
+import argparse
 
 
 CERT_FILE = os.path.expanduser("~/.ssh/cert.pem")
@@ -80,7 +80,8 @@ def serve_http(
     """setting up server"""
 
     if https:
-        httpd.socket = ssl.wrap_socket(httpd.socket, keyfile=KEY_FILE, certfile=CERT_FILE, server_side=True)
+        httpd.socket = ssl.wrap_socket(
+            httpd.socket, keyfile=KEY_FILE, certfile=CERT_FILE, server_side=True)
 
     if start_dir:
         print("Changing dir to {cd}".format(cd=start_dir))
@@ -107,34 +108,61 @@ def serve_http(
         print("\nKeyboard Interrupt received. Shutting server. Bye!")
 
 
-@click.command()
-@click.argument("username")
-@click.argument("password")
-@click.argument("ip", default="0.0.0.0")
-@click.argument("port", default=8333)
-@click.option("-d", "--dir", help="use different directory")
-@click.option("-s", "--https", help="use https", is_flag=True)
-@click.option(
-    "-t",
-    "--thread",
-    "use_threads",
-    is_flag=True,
-    help="serve each request in a different thread",
-)
-def main(dir, ip, port, username, password, https, use_threads):
+def create_parser():
+    parser = argparse.ArgumentParser(prog='sauth',
+                                     description="""
+A simple server for serving directories via http or https and BASIC authorization
+        """, formatter_class=argparse.RawTextHelpFormatter)
+    parser.add_argument("-u", "--username", type=str,
+                        help="Create a user who can access this server")
+
+    parser.add_argument("-p", "--password", type=str,
+                        help="Create a password for the user")
+
+    parser.add_argument("--ip", type=str, default="0.0.0.0",
+                        help="Use a different IP address (Default: 0.0.0.0)")
+
+    parser.add_argument("--port", type=int, default=8333,
+                        help="Use a different Port (Default: 8333)")
+
+    parser.add_argument("-d", "--dir", type=str,
+                        help="Use a different directory (Default: Current Directory)")
+
+    parser.add_argument("-s", "--https", action='store_true',
+                        help="Use https")
+
+    parser.add_argument("-t", "--use-threads",  action='store_true',
+                        help="Serve each request in a different thread")
+
+    return parser
+
+
+def main(argv=None):
     """
     Start http server with basic authentication current directory.
     """
-    if https and not (os.path.exists(CERT_FILE) and os.path.exists(KEY_FILE)):
+    if argv is None:
+        argv = sys.argv[1:]
+
+    parser = create_parser()
+    args = parser.parse_args(argv)
+
+    # if no args is given, invoke help
+    if len(argv) == 0:
+        parser.print_help(sys.stderr)
+        sys.exit(1)
+
+    if args.https and not (os.path.exists(CERT_FILE) and os.path.exists(KEY_FILE)):
         print(file=sys.stderr)
         print("Missing {} or {}".format(CERT_FILE, KEY_FILE), file=sys.stderr)
         print("Run `{}`".format(SSL_CMD), file=sys.stderr)
         print(file=sys.stderr)
         sys.exit(1)
 
-    SimpleHTTPAuthHandler.username = username
-    SimpleHTTPAuthHandler.password = password
-    serve_http(ip=ip, port=port, https=https, start_dir=dir, use_threads=use_threads)
+    SimpleHTTPAuthHandler.username = args.username
+    SimpleHTTPAuthHandler.password = args.password
+    serve_http(ip=args.ip, port=args.port, https=args.https,
+               start_dir=args.dir, use_threads=args.use_threads)
 
 
 if __name__ == "__main__":
