@@ -11,15 +11,23 @@ sauth
 A simple server for serving directories via http or https and BASIC authorization::
 
     $ sauth --help
-    Usage: sauth [OPTIONS] USERNAME PASSWORD [IP] [PORT]
+    usage: sauth [-h] [-u USERNAME] [-p PASSWORD] [--ip IP] [--port PORT] [-d DIR]
+             [-s] [-t]
 
-      Start http server with basic authentication current directory.
+    A simple server for serving directories via http or https and BASIC authorization
 
-    Options:
-      -d, --dir TEXT  use different directory
-      -s, --https     use https
-      -t, --thread    serve each request in a different thread
-      --help          Show this message and exit.
+
+    optional arguments:
+    -h, --help            show this help message and exit
+    -u USERNAME, --username USERNAME
+                            Create a user who can access this server
+    -p PASSWORD, --password PASSWORD
+                            Create a password for the user
+    --ip IP               Use a different IP address (Default: 0.0.0.0)
+    --port PORT           Use a different Port (Default: 8333)
+    -d DIR, --dir DIR     Use a different directory (Default: Current Directory)
+    -s, --https           Use https
+    -t, --use-threads     Serve each request in a different thread
 
 * Free software: GNU General Public License v3
 
@@ -39,15 +47,15 @@ Usage
 
 To serve your current directory simply run::
 
-    $ sauth someuser somepass
+    $ sauth -u someuser -p somepass
     Serving "/home/user/somedir" directory on http://0.0.0.0:8333
 
-You can specify port and ip to serve on with 3rd and 4th arguments::
+You can specify port and ip to serve on with `--port` and `--ip`::
 
-    $ sauth someuser somepass 127.0.0.1 1234
+    $ sauth -u someuser -p somepass --ip 127.0.0.1 --port 1234
     Serving "/home/user/somedir" directory on http://127.0.0.1:1234
 
-Threading is also supported through `-t` or `--thread` flags:
+Threading is also supported through  `-t` or `--use-threads` flags::
 
     $ sauth someuser somepass 127.0.0.1 1234 --thread
     Serving "/home/user/somedir" directory on http://127.0.0.1:1234 using threading

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "sauth"
-version = "1.1.0"
+version = "1.1.1"
 description = "simple server for serving directories via http or https and BASIC authorization"
 authors = ["granitosaurus <bernardas.alisauskas@pm.me>"]
 readme = "README.rst"
@@ -21,7 +21,6 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = "^3.6"
-click = "^8.0.3"
 
 [tool.poetry.dev-dependencies]
 
