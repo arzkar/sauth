@@ -57,5 +57,5 @@ You can specify port and ip to serve on with `--port` and `--ip`::
 
 Threading is also supported through  `-t` or `--use-threads` flags::
 
-    $ sauth someuser somepass 127.0.0.1 1234 --thread
+    $ sauth -u someuser -p somepass --ip 127.0.0.1 --port 1234 -t
     Serving "/home/user/somedir" directory on http://127.0.0.1:1234 using threading
